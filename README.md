@@ -28,7 +28,7 @@ If you want to add this block to another page, add this code to block events whi
 ```yaml
 sylius_ui:
     events:
-        sylius.shop.product.show.content: <--- default
+        sylius.shop.product.show.content: # <--- default
             blocks:
                 viewed_products:
                     template: "@VldmrkSyliusViewedProductsPlugin/_viewed_products.html.twig"
