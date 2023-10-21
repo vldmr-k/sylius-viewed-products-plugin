@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <service id="vldmrk.viewed_product.event_subscriber.product_show_listener" class="Vldmrk\SyliusViewedProductsPlugin\EventListener\ProductShowListener">
+            <argument type="service" id="vldmrk.viewed_product.storage.product_viewed_storage" />
+            <tag name="kernel.event_listener" event="sylius.product.show" method="track" />
+        </service>
+
+        <service id="vldmrk.viewed_product.storage.product_viewed_storage" class="\Vldmrk\SyliusViewedProductsPlugin\Storage\ViewedProductsStorage">
+            <argument id="sylius.storage.session" type="service" />
+            <argument>%vldmrk.viewed_products.property.storage.limit%</argument>
+        </service>
+
+        <service id="vldmrk.viewed_product.twig.viewed_products_extension" class="\Vldmrk\SyliusViewedProductsPlugin\Twig\ViewedProductsExtension">
+            <argument id="vldmrk.viewed_product.service.product_viewed_service" type="service"></argument>
+            <tag name="twig.extension" />
+        </service>
+
+        <service id="vldmrk.viewed_product.service.product_viewed_service" class="\Vldmrk\SyliusViewedProductsPlugin\Service\ViewedProductsService">
+            <argument id="sylius.repository.product" type="service" />
+            <argument id="vldmrk.viewed_product.storage.product_viewed_storage" type="service" />
+            <argument id="sylius.context.locale" type="service" />
+        </service>
+    </services>
+</container>

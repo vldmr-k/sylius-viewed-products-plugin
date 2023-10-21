@@ -1,0 +1,9 @@
+#vldmrk_sylius_viewed_products_shop:
+#    resource: "@VldmrkSyliusViewedProductsPlugin/Resources/config/shop_routing.yml"
+#    prefix: /{_locale}
+#    requirements:
+#        _locale: ^[a-z]{2}(?:_[A-Z]{2})?$#
+
+#vldmrk_sylius_viewed_products_admin:
+#    resource: "@VldmrkSyliusViewedProductsPlugin/Resources/config/admin_routing.yml"
+#    prefix: /admin

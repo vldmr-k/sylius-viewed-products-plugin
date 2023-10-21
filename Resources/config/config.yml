@@ -1,0 +1,7 @@
+sylius_ui:
+    events:
+        sylius.shop.product.show.content:
+            blocks:
+                viewed_products:
+                    template: "@VldmrkSyliusViewedProductsPlugin/_viewed_products.html.twig"
+                    priority: 20

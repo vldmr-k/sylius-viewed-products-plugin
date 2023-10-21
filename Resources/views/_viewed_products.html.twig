@@ -1,0 +1,7 @@
+
+{% if viewed_products_list() %}
+    <h4 class="ui horizontal section divider header">{{ "Viewed Products"|trans }}</h4>
+    <div id="sylius-products-viewed" {{ sylius_test_html_attribute('products-viewed') }}>
+        {% include '@SyliusShop/Product/_horizontalList.html.twig' with {'products': viewed_products_list() } %}
+    </div>
+{% endif %}
