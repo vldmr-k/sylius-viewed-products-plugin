@@ -9,7 +9,7 @@ This simple plugins helps your customers compare and looking the best product fo
 
 ```bash
 
-compose require vldmr-k/sylius-viewed-products-plugin
+composer require vldmr-k/sylius-viewed-products-plugin
 
 ```
 
