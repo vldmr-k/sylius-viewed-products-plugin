@@ -8,9 +8,20 @@
             <tag name="kernel.event_listener" event="sylius.product.show" method="track" />
         </service>
 
-        <service id="vldmrk.viewed_product.storage.product_viewed_storage" class="\Vldmrk\SyliusViewedProductsPlugin\Storage\ViewedProductsStorage">
+        <!-- Two storages; the extension keeps the one of "storage.type" and aliases it as
+             vldmrk.viewed_product.storage.product_viewed_storage. -->
+        <service id="vldmrk.viewed_product.storage.session" class="Vldmrk\SyliusViewedProductsPlugin\Storage\SessionViewedProductsStorage">
             <argument id="sylius.storage.session" type="service" />
             <argument>%vldmrk.viewed_products.property.storage.limit%</argument>
+        </service>
+
+        <service id="vldmrk.viewed_product.storage.cookie" class="Vldmrk\SyliusViewedProductsPlugin\Storage\CookieViewedProductsStorage">
+            <argument id="request_stack" type="service" />
+            <argument>%vldmrk.viewed_products.property.storage.limit%</argument>
+            <argument>%vldmrk.viewed_products.property.storage.cookie.name%</argument>
+            <argument>%vldmrk.viewed_products.property.storage.cookie.lifetime%</argument>
+            <tag name="kernel.event_subscriber" />
+            <tag name="kernel.reset" method="reset" />
         </service>
 
         <service id="vldmrk.viewed_product.twig.viewed_products_extension" class="\Vldmrk\SyliusViewedProductsPlugin\Twig\ViewedProductsExtension">
