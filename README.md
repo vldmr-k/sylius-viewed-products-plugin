@@ -38,10 +38,26 @@ sylius_ui:
 
 ### Storage
 
-By default, this plugins storage ids of viewed products in `sylius.storage.session`.
+The ids of viewed products (the last viewed first) are kept in one of two storages:
 
-If you want to implement your own storage, you need to implement interface  `Sylius\Component\Resource\Storage\StorageInterface`,
-and override default storage, that to pass to `vldmrk.viewed_product.storage.product_viewed_storage`  arguments custom storage.
+- `session` (default): in the session, under `_viewed_product`. A visitor who views a product gets a session.
+- `cookie`: in a cookie of its own (`viewed_products=812.77.4031`, HttpOnly, SameSite=Lax). Viewing products
+  does not start a session, and every view extends the cookie lifetime.
+
+```yaml
+# config/packages/vldmrk_sylius_viewed_products.yaml
+vldmrk_sylius_viewed_products:
+    storage:
+        type: cookie          # session | cookie
+        limit: 20             # how many products are remembered
+        cookie:
+            name: viewed_products
+            lifetime: 2592000 # seconds (30 days)
+```
+
+The chosen storage is the service `vldmrk.viewed_product.storage.product_viewed_storage`, also autowired as
+`Vldmrk\SyliusViewedProductsPlugin\Storage\ViewedProductsStorageInterface`.
+To keep the list somewhere else, implement that interface and point the alias at your service.
 
 That's all :)
 
