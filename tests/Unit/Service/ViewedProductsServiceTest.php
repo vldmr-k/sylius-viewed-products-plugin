@@ -40,14 +40,16 @@ final class ViewedProductsServiceTest extends TestCase
         (new ViewedProductsService($repository, $this->storage([30, 10, 20]), $this->locale('uk_UA')))->retrieveProducts(5);
 
         self::assertSame(['o.id IN(30, 10, 20)', 'o.enabled = 1'], $this->conditions);
-        self::assertSame(5, $this->maxResults);
+        self::assertNull($this->maxResults);
     }
 
     public function testTheDefaultLimitIsTen(): void
     {
-        (new ViewedProductsService($this->repository('uk_UA', []), $this->storage([1]), $this->locale('uk_UA')))->retrieveProducts();
+        $products = array_map(fn (int $id): ProductInterface => $this->product($id), range(1, 12));
 
-        self::assertSame(10, $this->maxResults);
+        $service = new ViewedProductsService($this->repository('uk_UA', $products), $this->storage(range(1, 12)), $this->locale('uk_UA'));
+
+        self::assertSame(array_slice($products, 0, 10), $service->retrieveProducts());
     }
 
     public function testProductsComeInTheOrderTheyWereViewed(): void
@@ -62,14 +64,38 @@ final class ViewedProductsServiceTest extends TestCase
         self::assertInstanceOf(ViewedProductsServiceInterface::class, $service);
     }
 
-    public function testTheLimitIsAppliedInTheQueryBeforeTheViewOrder(): void
+    public function testTheLastViewedProductsAreShownWhenThereAreMoreThanTheLimit(): void
     {
-        // Current behaviour, looks wrong: the query has no ORDER BY, so with more viewed products than the
-        // limit the database picks which ones are shown, not the last viewed.
-        (new ViewedProductsService($this->repository('uk_UA', []), $this->storage(range(1, 50)), $this->locale('uk_UA')))->retrieveProducts(10);
+        // The database returns them in its own order; all stored ids are asked, without a limit in the query.
+        $products = [];
+        foreach ([5, 50, 1, 3, 49, 2, 4] as $id) {
+            $products[$id] = $this->product($id);
+        }
 
-        self::assertSame(10, $this->maxResults);
-        self::assertStringContainsString('50)', $this->conditions[0]);
+        $service = new ViewedProductsService($this->repository('uk_UA', array_values($products)), $this->storage(range(1, 50)), $this->locale('uk_UA'));
+
+        self::assertSame([$products[1], $products[2], $products[3]], $service->retrieveProducts(3));
+        self::assertSame('o.id IN(' . implode(', ', range(1, 50)) . ')', $this->conditions[0]);
+        self::assertNull($this->maxResults);
+    }
+
+    public function testDisabledOrMissingProductsDoNotTakePlaces(): void
+    {
+        // 30 and 10 were viewed last but are disabled or deleted, so the query does not return them.
+        $twenty = $this->product(20);
+        $forty = $this->product(40);
+        $sixty = $this->product(60);
+
+        $service = new ViewedProductsService($this->repository('uk_UA', [$sixty, $forty, $twenty]), $this->storage([30, 10, 20, 40, 60]), $this->locale('uk_UA'));
+
+        self::assertSame([$twenty, $forty], $service->retrieveProducts(2));
+    }
+
+    public function testAZeroLimitGivesNothing(): void
+    {
+        $service = new ViewedProductsService($this->repository('uk_UA', [$this->product(1)]), $this->storage([1]), $this->locale('uk_UA'));
+
+        self::assertSame([], $service->retrieveProducts(0));
     }
 
     private function repository(string $locale, array $result): ProductRepositoryInterface

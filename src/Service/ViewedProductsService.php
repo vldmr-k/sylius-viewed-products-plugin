@@ -31,11 +31,12 @@ class ViewedProductsService implements ViewedProductsServiceInterface {
         $locale = $this->localeContext->getLocaleCode();
         $qb = $this->productRepository->createListQueryBuilder($locale);
 
+        // All stored ids are asked and the limit is applied after sorting: the shown products are the last
+        // viewed enabled ones, not whichever the database returns first.
         /** @var ProductInterface[] $result */
         $result = $qb->andWhere($qb->expr()->in('o.id', $ids))
             ->andWhere($qb->expr()->eq('o.enabled', true))
             ->getQuery()
-            ->setMaxResults($limit)
             ->getResult();
 
         //here we sort array by sortedIds
@@ -46,7 +47,7 @@ class ViewedProductsService implements ViewedProductsServiceInterface {
             return $inverterIds[$aid] > $inverterIds[$bid] ? 1 : -1;
         });
 
-        return $result;
+        return array_slice($result, 0, max(0, $limit));
     }
 
 }
