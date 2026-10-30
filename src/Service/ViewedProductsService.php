@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Vldmrk\SyliusViewedProductsPlugin\Service;
 
+use Doctrine\ORM\QueryBuilder;
 use Sylius\Component\Core\Model\ProductInterface;
 use Sylius\Component\Core\Repository\ProductRepositoryInterface;
 use Sylius\Component\Locale\Context\LocaleContextInterface;
@@ -34,10 +35,8 @@ class ViewedProductsService implements ViewedProductsServiceInterface {
         // All stored ids are asked and the limit is applied after sorting: the shown products are the last
         // viewed enabled ones, not whichever the database returns first.
         /** @var ProductInterface[] $result */
-        $result = $qb->andWhere($qb->expr()->in('o.id', $ids))
-            ->andWhere($qb->expr()->eq('o.enabled', true))
-            ->getQuery()
-            ->getResult();
+        $result = $this->getResult($qb->andWhere($qb->expr()->in('o.id', $ids))
+            ->andWhere($qb->expr()->eq('o.enabled', true)));
 
         //here we sort array by sortedIds
         $inverterIds = array_flip($ids);
@@ -48,6 +47,16 @@ class ViewedProductsService implements ViewedProductsServiceInterface {
         });
 
         return array_slice($result, 0, max(0, $limit));
+    }
+
+    /**
+     * Runs the query. Kept apart so tests can stub it: Doctrine\ORM\Query is final in ORM 3.
+     *
+     * @return ProductInterface[]
+     */
+    protected function getResult(QueryBuilder $queryBuilder): array
+    {
+        return $queryBuilder->getQuery()->getResult();
     }
 
 }
