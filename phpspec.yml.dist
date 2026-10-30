@@ -1,4 +1,0 @@
-suites:
-    main:
-        namespace: Vldmrk\SyliusViewedProductsPlugin
-        psr4_prefix: Vldmrk\SyliusViewedProductsPlugin
