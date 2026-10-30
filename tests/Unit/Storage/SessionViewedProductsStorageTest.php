@@ -6,7 +6,7 @@ namespace Tests\Vldmrk\SyliusViewedProductsPlugin\Unit\Storage;
 
 use PHPUnit\Framework\TestCase;
 use Sylius\Component\Core\Model\ProductInterface;
-use Sylius\Component\Resource\Storage\StorageInterface;
+use Sylius\Resource\Storage\StorageInterface;
 use Vldmrk\SyliusViewedProductsPlugin\Storage\SessionViewedProductsStorage;
 
 final class SessionViewedProductsStorageTest extends TestCase

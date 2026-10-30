@@ -13,7 +13,7 @@ class ViewedProductsExtension extends \Twig\Extension\AbstractExtension  {
     ) {
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('viewed_products_list', [$this->viewedProductsService, 'retrieveProducts']),

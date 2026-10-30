@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Vldmrk\SyliusViewedProductsPlugin\Storage;
 
 use Sylius\Component\Core\Model\ProductInterface;
-use Sylius\Component\Resource\Storage\StorageInterface;
+use Sylius\Resource\Storage\StorageInterface;
 
 /**
  * Keeps the list in the session, as JSON under "_viewed_product".
