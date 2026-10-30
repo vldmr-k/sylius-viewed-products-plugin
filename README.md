@@ -21,20 +21,25 @@ imports:
     - { resource: "@VldmrkSyliusViewedProductsPlugin/Resources/config/config.yml" }
 ```
 
-By default, this plugins render last viewed products on product show page, event block name `sylius.shop.product.show.content`.
+Sylius 2 is required (the 1.x branch is for Sylius 1).
 
-If you want to add this block to another page, add this code to block events which you want
+By default, this plugin renders the last viewed products on the product show page, as the Twig hook
+`viewed_products` of `sylius_shop.product.show.content` (priority 50: after the product info, before the associations).
+The products are shown as Sylius shop product cards (`sylius_shop:product:card`).
+
+To move or replace the block, configure the hook in your app:
 
 ```yaml
-sylius_ui:
-    events:
-        sylius.shop.product.show.content: # <--- default
-            blocks:
-                viewed_products:
-                    template: "@VldmrkSyliusViewedProductsPlugin/_viewed_products.html.twig"
-                    priority: 20
-                    
+sylius_twig_hooks:
+    hooks:
+        'sylius_shop.product.show.content':
+            viewed_products:
+                template: "@VldmrkSyliusViewedProductsPlugin/_viewed_products.html.twig" # or your own template
+                priority: 50
+                # enabled: false  # to hide it
 ```
+
+To show the list on another page, add a hook with that template to one of that page's hooks.
 
 ### Storage
 
@@ -63,5 +68,9 @@ That's all :)
 
 ### Development
 
-See [FORDEVREADME.md](./FORDEVREADME.md)
+The plugin has no vendor of its own: its tests borrow the autoloader of a Sylius 2 app.
+
+```bash
+HOST_AUTOLOAD=/path/to/app/vendor/autoload.php /path/to/app/vendor/bin/phpunit -c phpunit.xml.dist
+```
 

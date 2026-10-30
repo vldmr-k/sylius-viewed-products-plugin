@@ -1,7 +1,8 @@
-sylius_ui:
-    events:
-        sylius.shop.product.show.content:
-            blocks:
-                viewed_products:
-                    template: "@VldmrkSyliusViewedProductsPlugin/_viewed_products.html.twig"
-                    priority: 20
+sylius_twig_hooks:
+    hooks:
+        # After the product info (gallery, summary, tabs), before the associations; in Sylius 1 the block
+        # stood at priority 20 of sylius.shop.product.show.content, before the associations (10).
+        'sylius_shop.product.show.content':
+            viewed_products:
+                template: '@VldmrkSyliusViewedProductsPlugin/_viewed_products.html.twig'
+                priority: 50

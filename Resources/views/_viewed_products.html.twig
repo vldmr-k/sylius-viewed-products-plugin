@@ -1,7 +1,13 @@
-
-{% if viewed_products_list() %}
-    <h4 class="ui horizontal section divider header">{{ "Viewed Products"|trans }}</h4>
-    <div id="sylius-products-viewed" {{ sylius_test_html_attribute('products-viewed') }}>
-        {% include '@SyliusShop/Product/_horizontalList.html.twig' with {'products': viewed_products_list() } %}
+{% set viewed_products = viewed_products_list() %}
+{% if viewed_products %}
+    <div class="mb-6" role="region" aria-labelledby="viewed-products-heading">
+        <h2 class="mb-5" id="viewed-products-heading">{{ "Viewed Products"|trans }}</h2>
+        <div id="sylius-products-viewed" {{ sylius_test_html_attribute('products-viewed') }}>
+            <div class="products-grid">
+                {% for product in viewed_products %}
+                    <div>{{ component('sylius_shop:product:card', { product: product, template: '@SyliusShop/product/common/card.html.twig', hookableMetadata: hookable_metadata }) }}</div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endif %}
